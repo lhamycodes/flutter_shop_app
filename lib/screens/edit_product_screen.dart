@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../providers/product.dart';
+import '../providers/products.dart';
 
 class EditProductScreen extends StatefulWidget {
   static const routeName = '/edit-product';
@@ -51,10 +53,11 @@ class _EditProductScreenState extends State<EditProductScreen> {
       return;
     }
     _form.currentState.save();
-    print(_editedProduct.title);
-    print(_editedProduct.description);
-    print(_editedProduct.price);
-    print(_editedProduct.imageUrl);
+    Provider.of<Products>(
+      context,
+      listen: false,
+    ).addProducts(_editedProduct);
+    Navigator.of(context).pop();
   }
 
   @override
@@ -103,13 +106,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   FocusScope.of(context).requestFocus(_descriptionFocusNode);
                 },
                 validator: (value) {
-                  if(value.isEmpty){
+                  if (value.isEmpty) {
                     return "Please enter a price";
                   }
-                  if(double.tryParse(value) == null){
+                  if (double.tryParse(value) == null) {
                     return "Please enter a valid number";
                   }
-                  if((double.parse(value) <= 0)){
+                  if ((double.parse(value) <= 0)) {
                     return "Please enter a number greater than zero";
                   }
                   return null;
@@ -130,10 +133,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 keyboardType: TextInputType.multiline,
                 focusNode: _descriptionFocusNode,
                 validator: (value) {
-                  if(value.isEmpty){
+                  if (value.isEmpty) {
                     return "Please enter a description";
                   }
-                  if(value.length < 10){
+                  if (value.length < 10) {
                     return "Description should be at least 10 characters";
                   }
                   return null;
@@ -187,13 +190,16 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         _saveForm();
                       },
                       validator: (value) {
-                        if(value.isEmpty){
+                        if (value.isEmpty) {
                           return "Image URL is required";
                         }
-                        if(!value.startsWith("http") && !value.startsWith("https")){
+                        if (!value.startsWith("http") &&
+                            !value.startsWith("https")) {
                           return "Please enter a valid URL.";
                         }
-                        if(!value.endsWith('.png') && !value.endsWith('.jpg') && !value.endsWith('.jpeg')){
+                        if (!value.endsWith('.png') &&
+                            !value.endsWith('.jpg') &&
+                            !value.endsWith('.jpeg')) {
                           return "Image URL Provided doesn't yield an image";
                         }
                         return null;
